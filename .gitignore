@@ -2,3 +2,4 @@
 *.egg-info
 *.pyc
 tests/test_hydrant.py
+doc/build
