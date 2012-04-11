@@ -7,8 +7,10 @@ import urllib
 import unittest
 import uuid
 from cookielib import CookieJar
-from webobtoolkit import filters, client
+from webobtoolkit import filters, client, testing
 import json
+import logging
+logging.basicConfig(level="DEBUG")
 
 # these "servers" are simpple wsgi applications that are used for testing
 def status_200_server(environ, start_response):
@@ -139,24 +141,55 @@ class TestQuickStart(unittest.TestCase):
 
     def testClient(self):
         payload = {'key1': 'value1', 'key2': 'value2'}
-        r = client.get("http://httpbin.org/get", params=payload)
-        self.assert_(r.status_int == 200, str(r))
-        print str(r)
+        _client = client.Client()
+        _client.get("http://httpbin.org/get", params=payload,
+                    assert_=testing.assert_status_code._200)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
-        r = client.post("http://httpbin.org/post", data=payload)
-        self.assert_(r.status_int == 200, str(r))
-        print str(r)
+        _client.post("http://httpbin.org/post", data=payload)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
-        r = client.post("http://httpbin.org/post", data=json.dumps(payload))
-        self.assert_(r.status_int == 200, str(r))
-        print str(r)
+        _client.post("http://httpbin.org/post", data=json.dumps(payload),
+                     assert_=testing.assert_status_code._200)
 
+        _client.post("http://httpbin.org/post",
+                     headers={"content-type": "application/json"},
+                     data=json.dumps(payload),
+                     assert_=testing.assert_status_code._200)
 
+    def testCustomClient(self):
+        proxy = client.make_client_wsgi(logging=True, log_level="DEBUG")
+        myclient = client.Client(app=proxy)
 
-        r = client.post("http://httpbin.org/post",
-                        headers={"content-type": "application/json"},
-                        data=json.dumps(payload))
-        self.assert_(r.status_int == 200, str(r))
-        print str(r)
+        payload = {'key1': 'value1', 'key2': 'value2'}
+        myclient.get("http://httpbin.org/get",
+                     params=payload,
+                     assert_=testing.assert_status_code._200)
+
+        payload = {'key1': 'value1', 'key2': 'value2'}
+        myclient.post("http://httpbin.org/post",
+                      data=payload,
+                      assert_=testing.assert_status_code._200)
+
+        payload = {'key1': 'value1', 'key2': 'value2'}
+        myclient.post("http://httpbin.org/post",
+                      data=json.dumps(payload),
+                      assert_=testing.assert_status_code._200)
+
+        payload = {'key1': 'value1', 'key2': 'value2'}
+        myclient.put("http://httpbin.org/put",
+                     data=json.dumps(payload),
+                     assert_=testing.assert_status_code._200)
+
+        payload = {'key1': 'value1', 'key2': 'value2'}
+        myclient.delete("http://httpbin.org/delete",
+                        data=json.dumps(payload),
+                        assert_=testing.assert_status_code._200)
+
+        myclient.post("http://httpbin.org/post",
+                      headers={"content-type": "application/json"},
+                      data=json.dumps(payload),
+                      assert_=testing.assert_status_code._200)
+
+        myclient.get("http://httpbin.org/gzip",
+                     assert_=testing.assert_status_code._200)
