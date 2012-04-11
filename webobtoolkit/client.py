@@ -84,11 +84,11 @@ class Client(object):
                                   headers=headers)
         response = request.get_response(self._app)
 
-        if self._assert_:
-            self._assert_(request, response)
-
         if assert_:
             assert_(request.copy(), response.copy())
+        else:
+            if self._assert_:
+                self._assert_(request, response)
 
         return response
 
