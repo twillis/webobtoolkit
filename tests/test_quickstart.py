@@ -141,55 +141,43 @@ class TestQuickStart(unittest.TestCase):
 
     def testClient(self):
         payload = {'key1': 'value1', 'key2': 'value2'}
-        _client = client.Client()
-        _client.get("http://httpbin.org/get", params=payload,
-                    assert_=testing.assert_status_code._200)
+        _client = client.Client(assert_=testing.assert_status_code._200)
+        _client.get("http://httpbin.org/get", params=payload)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         _client.post("http://httpbin.org/post", data=payload)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
-        _client.post("http://httpbin.org/post", data=json.dumps(payload),
-                     assert_=testing.assert_status_code._200)
+        _client.post("http://httpbin.org/post", data=json.dumps(payload))
 
         _client.post("http://httpbin.org/post",
                      headers={"content-type": "application/json"},
-                     data=json.dumps(payload),
-                     assert_=testing.assert_status_code._200)
+                     data=json.dumps(payload))
 
     def testCustomClient(self):
         proxy = client.make_client_wsgi(logging=True, log_level="DEBUG")
-        myclient = client.Client(app=proxy)
+        myclient = client.Client(app=proxy, assert_=testing.assert_status_code._200)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.get("http://httpbin.org/get",
-                     params=payload,
-                     assert_=testing.assert_status_code._200)
+                     params=payload)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.post("http://httpbin.org/post",
-                      data=payload,
-                      assert_=testing.assert_status_code._200)
-
+                      data=payload)
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.post("http://httpbin.org/post",
-                      data=json.dumps(payload),
-                      assert_=testing.assert_status_code._200)
-
+                      data=json.dumps(payload))
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.put("http://httpbin.org/put",
-                     data=json.dumps(payload),
-                     assert_=testing.assert_status_code._200)
+                     data=json.dumps(payload))
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.delete("http://httpbin.org/delete",
-                        data=json.dumps(payload),
-                        assert_=testing.assert_status_code._200)
+                        data=json.dumps(payload))
 
         myclient.post("http://httpbin.org/post",
                       headers={"content-type": "application/json"},
-                      data=json.dumps(payload),
-                      assert_=testing.assert_status_code._200)
+                      data=json.dumps(payload))
 
-        myclient.get("http://httpbin.org/gzip",
-                     assert_=testing.assert_status_code._200)
+        myclient.get("http://httpbin.org/gzip")

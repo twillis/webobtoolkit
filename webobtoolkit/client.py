@@ -31,7 +31,7 @@ def make_client_wsgi(wsgi=proxy.proxy_exact_request,
     return wsgi
 
 
-assert_true = lambda request, response: True
+
 
 class Client(object):
     """
@@ -41,27 +41,27 @@ class Client(object):
     called for every call to app
     """
 
-    def __init__(self, app=make_client_wsgi(), assert_=lambda request, response: True):
+    def __init__(self, app=make_client_wsgi(), assert_=None):
         self._app = app
         if assert_:
             self._assert_ = assert_
         else:
             self._assert_ = None
 
-    def get(self, url, params=None, headers={}, assert_=assert_true):
+    def get(self, url, params=None, headers={}, assert_=None):
         return self.__call__(url=url, method="get", params=params, headers=headers, assert_=assert_)
 
-    def post(self, url, params=None, data={}, headers={}, assert_=assert_true):
+    def post(self, url, params=None, data={}, headers={}, assert_=None):
         return self.__call__(url=url, method="post", params=params, data=data, headers=headers, assert_=assert_)
 
 
-    def put(self, url, params=None, data={}, headers={}, assert_=assert_true):
+    def put(self, url, params=None, data={}, headers={}, assert_=None):
         return self.__call__(url=url, method="put", params=params, data=data, headers=headers, assert_=assert_)
 
-    def delete(self, url, params=None, data={}, headers={}, assert_=assert_true):
+    def delete(self, url, params=None, data={}, headers={}, assert_=None):
         return self.__call__(url=url, method="delete", params=params, data=data, headers=headers, assert_=assert_)
 
-    def __call__(self, url, method="get", params=None, data=None, headers={}, assert_=assert_true):
+    def __call__(self, url, method="get", params=None, data=None, headers={}, assert_=None):
         """
         url: the url for the request
 
