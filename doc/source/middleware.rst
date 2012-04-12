@@ -1,3 +1,6 @@
+
+.. _wsgi_middleware:
+
 ============================
  Introduction To Middleware
 ============================
