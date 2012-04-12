@@ -7,7 +7,7 @@ from urllib import urlencode
 from webob import Request
 
 
-def make_client_wsgi(wsgi=proxy.proxy_exact_request,
+def basic_app(wsgi=proxy.proxy_exact_request,
                      cookie_support=True,
                      content_decoding=True,
                      logging=False, log_level=None):
@@ -41,35 +41,35 @@ class Client(object):
     called for every call to app
     """
 
-    def __init__(self, app=make_client_wsgi(), assert_=None):
+    def __init__(self, app=basic_app(), assert_=None):
         self._app = app
         if assert_:
             self._assert_ = assert_
         else:
             self._assert_ = None
 
-    def get(self, url, params=None, headers={}, assert_=None):
-        return self.__call__(url=url, method="get", params=params, headers=headers, assert_=assert_)
+    def get(self, url, query_string=None, headers={}, assert_=None):
+        return self.__call__(url=url, method="get", query_string=query_string, headers=headers, assert_=assert_)
 
-    def post(self, url, params=None, data={}, headers={}, assert_=None):
-        return self.__call__(url=url, method="post", params=params, data=data, headers=headers, assert_=assert_)
+    def post(self, url, query_string=None, post={}, headers={}, assert_=None):
+        return self.__call__(url=url, method="post", query_string=query_string, post=post, headers=headers, assert_=assert_)
 
 
-    def put(self, url, params=None, data={}, headers={}, assert_=None):
-        return self.__call__(url=url, method="put", params=params, data=data, headers=headers, assert_=assert_)
+    def put(self, url, query_string=None, post={}, headers={}, assert_=None):
+        return self.__call__(url=url, method="put", query_string=query_string, post=post, headers=headers, assert_=assert_)
 
-    def delete(self, url, params=None, data={}, headers={}, assert_=None):
-        return self.__call__(url=url, method="delete", params=params, data=data, headers=headers, assert_=assert_)
+    def delete(self, url, query_string=None, post={}, headers={}, assert_=None):
+        return self.__call__(url=url, method="delete", query_string=query_string, post=post, headers=headers, assert_=assert_)
 
-    def __call__(self, url, method="get", params=None, data=None, headers={}, assert_=None):
+    def __call__(self, url, method="get", query_string=None, post=None, headers={}, assert_=None):
         """
         url: the url for the request
 
         method: the method for the request
 
-        params: the querystring dict which will be urlencoded for you
+        query_string: the querystring dict which will be urlencoded for you
 
-        data: form post
+        post: form post
 
         headers: extra headers fpr the request
 
@@ -79,8 +79,8 @@ class Client(object):
         """
         request = self._make_request(url=url,
                                   method=method,
-                                  params=params,
-                                  data=data,
+                                  query_string=query_string,
+                                  post=post,
                                   headers=headers)
         response = request.get_response(self._app)
 
@@ -93,14 +93,14 @@ class Client(object):
         return response
 
     @classmethod
-    def _make_request(self, url, method="get", params=None, data=None, headers={}):
+    def _make_request(self, url, method="get", query_string=None, post=None, headers={}):
         """could be delegated to a request factory"""
-        if params and hasattr(params, "keys"):
-            _params = urlencode(params)
-        elif params:
-            _params = str(params)
+        if query_string and hasattr(query_string, "keys"):
+            _query_string = urlencode(query_string)
+        elif query_string:
+            _query_string = str(query_string)
         else:
-            _params = None
+            _query_string = None
 
         if headers:
             _headers = headers.items()
@@ -109,6 +109,6 @@ class Client(object):
 
         return Request.blank(url,
                        method=method.upper(),
-                       query_string=_params,
-                       POST=data,
+                       query_string=_query_string,
+                       POST=post,
                        headers=_headers)

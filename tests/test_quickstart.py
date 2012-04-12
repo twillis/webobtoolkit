@@ -142,42 +142,42 @@ class TestQuickStart(unittest.TestCase):
     def testClient(self):
         payload = {'key1': 'value1', 'key2': 'value2'}
         _client = client.Client(assert_=testing.assert_status_code._200)
-        _client.get("http://httpbin.org/get", params=payload)
+        _client.get("http://httpbin.org/get", query_string=payload)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
-        _client.post("http://httpbin.org/post", data=payload)
+        _client.post("http://httpbin.org/post", post=payload)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
-        _client.post("http://httpbin.org/post", data=json.dumps(payload))
+        _client.post("http://httpbin.org/post", post=json.dumps(payload))
 
         _client.post("http://httpbin.org/post",
                      headers={"content-type": "application/json"},
-                     data=json.dumps(payload))
+                     post=json.dumps(payload))
 
     def testCustomClient(self):
-        proxy = client.make_client_wsgi(logging=True, log_level="DEBUG")
+        proxy = client.basic_app(logging=True, log_level="DEBUG")
         myclient = client.Client(app=proxy, assert_=testing.assert_status_code._200)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.get("http://httpbin.org/get",
-                     params=payload)
+                     query_string=payload)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.post("http://httpbin.org/post",
-                      data=payload)
+                      post=payload)
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.post("http://httpbin.org/post",
-                      data=json.dumps(payload))
+                      post=json.dumps(payload))
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.put("http://httpbin.org/put",
-                     data=json.dumps(payload))
+                     post=json.dumps(payload))
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.delete("http://httpbin.org/delete",
-                        data=json.dumps(payload))
+                        post=json.dumps(payload))
 
         myclient.post("http://httpbin.org/post",
                       headers={"content-type": "application/json"},
-                      data=json.dumps(payload))
+                      post=json.dumps(payload))
 
         myclient.get("http://httpbin.org/gzip")

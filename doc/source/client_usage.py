@@ -1,13 +1,13 @@
 """
 example client usage
 """
-from webobtoolkit.client import Client, make_client_wsgi
+from webobtoolkit.client import Client, basic_app
 from webobtoolkit.proxy import proxy_exact_request
 import logging
 logging.basicConfig(level="DEBUG")
 
 # first we make an application 
-app = make_client_wsgi(wsgi=proxy_exact_request, # this wsgi app sends the request to the url you specify
+app = basic_app(wsgi=proxy_exact_request, # this wsgi app sends the request to the url you specify
                        cookie_support=True, # turn on cookie support
                        content_decoding=True, # decompress responses if necessary
                        logging=True, # turn on logging
@@ -15,6 +15,6 @@ app = make_client_wsgi(wsgi=proxy_exact_request, # this wsgi app sends the reque
 
 client = Client(app=app)
 
-response = client.get("http://www.google.com", params=(dict(q="wsgi as http client")))
+response = client.get("http://www.google.com", query_string=(dict(q="wsgi as http client")))
 
-assert response.status_int == 200
+assert response.status_int == 200, "something went wrong"
