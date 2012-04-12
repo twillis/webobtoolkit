@@ -29,7 +29,8 @@ Contents:
    filters
    proxy
    client   
-
+   cookbook
+   reference
 
 
 Indices and tables
