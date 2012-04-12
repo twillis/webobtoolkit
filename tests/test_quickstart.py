@@ -11,7 +11,7 @@ from webobtoolkit import filters, client, testing
 import json
 import logging
 logging.basicConfig(level="DEBUG")
-
+log = logging.getLogger(__file__)
 # these "servers" are simpple wsgi applications that are used for testing
 def status_200_server(environ, start_response):
     return Response("OK")(environ, start_response)
@@ -139,21 +139,6 @@ class TestQuickStart(unittest.TestCase):
         self.assert_("Cookie" in request.headers,
                      (str(request), "Y NO COOKIES?"))
 
-    def testClient(self):
-        payload = {'key1': 'value1', 'key2': 'value2'}
-        _client = client.Client(assert_=testing.assert_status_code._200)
-        _client.get("http://httpbin.org/get", query_string=payload)
-
-        payload = {'key1': 'value1', 'key2': 'value2'}
-        _client.post("http://httpbin.org/post", post=payload)
-
-        payload = {'key1': 'value1', 'key2': 'value2'}
-        _client.post("http://httpbin.org/post", post=json.dumps(payload))
-
-        _client.post("http://httpbin.org/post",
-                     headers={"content-type": "application/json"},
-                     post=json.dumps(payload))
-
     def testCustomClient(self):
         proxy = client.basic_app(logging=True, log_level="DEBUG")
         myclient = client.Client(app=proxy, assert_=testing.assert_status_code._200)
@@ -181,3 +166,54 @@ class TestQuickStart(unittest.TestCase):
                       post=json.dumps(payload))
 
         myclient.get("http://httpbin.org/gzip")
+        try:
+            myclient.get("http://no")
+            self.fail("should have raised an exception")
+        except:
+            log.debug("yay I got an error", exc_info=True)
+
+        myclient.get("http://no", assert_=testing.assert_status_code._502)
+
+    def testAssertFilter(self):
+        nobody = Response(status_int=501)
+
+        def assert_body(request, response):
+            assert response.body, "there's no body"
+        app = filters.assert_filter(nobody, assert_=assert_body)
+
+        try:
+            Request.blank("/").get_response(app)
+            self.fail("should have gotten an assertion error")
+        except AssertionError:
+            pass
+
+        app = filters.assert_filter(Response("I'm somebody"),
+                                    assert_=assert_body)
+        Request.blank("/").get_response(app)
+
+
+class TestHoles(unittest.TestCase):
+    """
+    this doesn't prove anything other than there is 100% test coverage
+    """
+    def testbasic_app_init(self):
+        """
+        enable logging with no log_level
+        """
+        client.basic_app(logging=True)
+
+    def testClient_init(self):
+        client.Client()
+
+    def testClient_make_request_qs_as_str(self):
+        client.Client._make_request("url", query_string="hey hey")
+
+    def testInvalidLogLevel(self):
+        """
+        should raise value error
+        """
+        try:
+            filters.http_log_filter(client.basic_app(), "NO")
+            self.fail("no error")
+        except ValueError:
+            pass

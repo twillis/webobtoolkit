@@ -7,7 +7,7 @@ from urllib import urlencode
 from webob import Request
 
 
-def basic_app(wsgi=proxy.proxy_exact_request,
+def basic_app(wsgi=proxy.send_request_app,
                      cookie_support=True,
                      content_decoding=True,
                      logging=False, log_level=None):
@@ -31,8 +31,6 @@ def basic_app(wsgi=proxy.proxy_exact_request,
     return wsgi
 
 
-
-
 class Client(object):
     """
     app: wsgi application to pass requests to
@@ -49,17 +47,36 @@ class Client(object):
             self._assert_ = None
 
     def get(self, url, query_string=None, headers={}, assert_=None):
-        return self.__call__(url=url, method="get", query_string=query_string, headers=headers, assert_=assert_)
+        return self(url=url,
+                             method="get",
+                             query_string=query_string,
+                             headers=headers,
+                             assert_=assert_)
 
     def post(self, url, query_string=None, post={}, headers={}, assert_=None):
-        return self.__call__(url=url, method="post", query_string=query_string, post=post, headers=headers, assert_=assert_)
+        return self(url=url,
+                             method="post",
+                             query_string=query_string,
+                             post=post,
+                             headers=headers,
+                             assert_=assert_)
 
 
     def put(self, url, query_string=None, post={}, headers={}, assert_=None):
-        return self.__call__(url=url, method="put", query_string=query_string, post=post, headers=headers, assert_=assert_)
+        return self(url=url,
+                             method="put",
+                             query_string=query_string,
+                             post=post,
+                             headers=headers,
+                             assert_=assert_)
 
     def delete(self, url, query_string=None, post={}, headers={}, assert_=None):
-        return self.__call__(url=url, method="delete", query_string=query_string, post=post, headers=headers, assert_=assert_)
+        return self(url=url,
+                             method="delete",
+                             query_string=query_string,
+                             post=post,
+                             headers=headers,
+                             assert_=assert_)
 
     def __call__(self, url, method="get", query_string=None, post=None, headers={}, assert_=None):
         """
@@ -74,7 +91,9 @@ class Client(object):
         headers: extra headers fpr the request
 
         assert_: a callback to be ran after the response is recieved
-        in the form of lambda: request, response: True
+        in the form of lambda: request, response: True . If present it
+        will be ran for this call only rather than the one set on the
+        client
 
         """
         request = self._make_request(url=url,
@@ -88,7 +107,7 @@ class Client(object):
             assert_(request.copy(), response.copy())
         else:
             if self._assert_:
-                self._assert_(request, response)
+                self._assert_(request.copy(), response.copy())
 
         return response
 

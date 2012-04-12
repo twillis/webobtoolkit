@@ -15,7 +15,7 @@ filtered_headers = (
 )
 
 
-def proxy_exact_request(environ, start_response):
+def send_request_app(environ, start_response):
     """
     HTTP proxying WSGI application that proxies the exact request
     given in the environment.  All controls are passed through the
