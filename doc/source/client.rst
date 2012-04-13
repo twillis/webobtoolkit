@@ -1,8 +1,8 @@
-=====================
- webobtoolkit Client
-=====================
+======
+client
+======
 
-By now, hopefully you are somewhat familiar with the wsgi interface
+by now, hopefully you are somewhat familiar with the wsgi interface
 and how webob Request and Response play a role. 
 
 We've seen numerous examples of how small snippets of wsgi middleware
@@ -24,3 +24,11 @@ those applications or websites in your programs.
 .. literalinclude:: client_usage.py
    :language: python
 
+
+Reference
+=========
+
+.. autofunction:: webobtoolkit.client.basic_app
+
+.. autoclass:: webobtoolkit.client.Client
+   :members:

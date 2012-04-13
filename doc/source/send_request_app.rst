@@ -1,6 +1,8 @@
-======================================
- Proxy (yet another wsgi application)
-======================================
+.. _send_request_app:
+
+================
+send_request_app
+================
 
 So far we have seen examples of interacting with :ref:`wsgi
 applications <wsgi_application>` as callables to get HTTP Response

@@ -22,15 +22,13 @@ Contents:
 
 .. toctree::
    :maxdepth: 2
-
-   wsgi
-   middleware
-   webob
+   
+   overview
    filters
-   proxy
+   send_request_app
    client   
    cookbook
-   reference
+
 
 
 Indices and tables

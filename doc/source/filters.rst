@@ -1,9 +1,9 @@
-=======================
- webobtololkit Filters
-=======================
+=======
+Filters
+=======
 
 Filters are a collection of useful(in the authors opinion) :ref:`wsgi
-middleware <wsgi_middleware>` that is more client-centric than
+middleware <middleware_overview>` that is more client-centric than
 server-centric, you may find it useful too.
 
 http_capture_filter
