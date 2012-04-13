@@ -10,6 +10,12 @@ import logging
 def http_capture_filter(app, callback=lambda request, response: True):
     """
     captures request and response and passes off to a callback
+
+    :rtype: :ref:`wsgi_application`
+
+    :param app: inner :ref:`wsgi_application`
+
+    :param callback: function to call
     """
 
     def m(environ, start_response):
@@ -24,6 +30,12 @@ def http_log_filter(app, level="DEBUG"):
     """
     logs the request and response to the logger http_log at whatever
     level you specify
+
+    :rtype: :ref:`wsgi_application`
+
+    :param app: inner :ref:`wsgi_application`
+
+    :param level: log level
     """
     level_int = getattr(logging, str(level).upper(), None)
     log = logging.getLogger("http_log")
@@ -39,6 +51,11 @@ def http_log_filter(app, level="DEBUG"):
 def charset_filter(app):
     """
     if charset is missing, set it to a pretty much safe utf8
+
+    :rtype: :ref:`wsgi_application`
+
+    :param app: inner :ref:`wsgi_application`
+
     """
     def m(environ, start_response):
         request = Request(environ)
@@ -55,6 +72,11 @@ def decode_filter(app):
 
     BUG: for some reason, appengine doesn't respond to this and
     doesn't send gziped when asked.
+
+    :rtype: :ref:`wsgi_application`
+
+    :param app: inner :ref:`wsgi_application`
+
     """
     def m(environ, start_response):
         request = Request(environ)
@@ -68,6 +90,11 @@ def decode_filter(app):
 def assert_filter(app, assert_=lambda request, response: True):
     """
     will allow for assertions to be made on the request and response.
+
+    :rtype: :ref:`wsgi_application`
+
+    :param app: inner :ref:`wsgi_application`
+
     """
     def m(environ, start_response):
         request = Request(environ)
@@ -122,6 +149,10 @@ class ResponseCookieAdapter(object):
 def cookie_filter(app):
     """
     intercepts req/res and keeps track of cookies
+
+    :rtype: :ref:`wsgi_application`
+
+    :param app: inner :ref:`wsgi_application`
     """
     jar = CookieJar()
 

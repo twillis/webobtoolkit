@@ -116,7 +116,8 @@ access denied.
    :language: python
 
 
+Reference
+=========
 
-
-
-
+.. automodule:: webobtoolkit.filters
+   :members:
