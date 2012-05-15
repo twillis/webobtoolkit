@@ -3,6 +3,7 @@ examples for every example in requests quickstart
 http://docs.python-requests.org/en/latest/user/quickstart/
 """
 from webob import Request, Response
+from webob.client import send_request_app
 import urllib
 import unittest
 import uuid
@@ -140,8 +141,8 @@ class TestQuickStart(unittest.TestCase):
                      (str(request), "Y NO COOKIES?"))
 
     def testCustomClient(self):
-        proxy = client.basic_app(logging=True, log_level="DEBUG")
-        myclient = client.Client(app=proxy, assert_=testing.assert_status_code._200)
+        proxy = client.client_proxy(logging=True, log_level="DEBUG")
+        myclient = client.Client(proxy=proxy, assert_=testing.assert_status_code._200)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.get("http://httpbin.org/get",
@@ -200,7 +201,7 @@ class TestHoles(unittest.TestCase):
         """
         enable logging with no log_level
         """
-        client.basic_app(logging=True)
+        client.client_proxy(logging=True)
 
     def testClient_init(self):
         client.Client()
@@ -213,7 +214,7 @@ class TestHoles(unittest.TestCase):
         should raise value error
         """
         try:
-            filters.http_log_filter(client.basic_app(), "NO")
+            filters.http_log_filter(client.client_proxy(), "NO")
             self.fail("no error")
         except ValueError:
             pass

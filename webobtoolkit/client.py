@@ -2,12 +2,12 @@
 this is the client api it's mostly sugar
 """
 import filters
-import proxy
+from webob.client import send_request_app
 from urllib import urlencode
 from webob import Request
 
 
-def basic_app(app=proxy.send_request_app,
+def client_proxy(app=send_request_app,
                      cookie_support=True,
                      content_decoding=True,
                      logging=False, log_level=None):
@@ -43,8 +43,8 @@ class Client(object):
     
     """
 
-    def __init__(self, app=basic_app(), assert_=None):
-        self._app = app
+    def __init__(self, proxy=client_proxy(), assert_=None):
+        self._proxy = proxy
         if assert_:
             self._assert_ = assert_
         else:
@@ -162,7 +162,7 @@ class Client(object):
                                   query_string=query_string,
                                   post=post,
                                   headers=headers)
-        response = request.get_response(self._app)
+        response = request.get_response(self._proxy)
 
         if assert_:
             assert_(request.copy(), response.copy())
