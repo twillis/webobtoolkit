@@ -28,9 +28,9 @@ setup(name='webobtoolkit',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[],
       keywords='',
-      author='',
-      author_email='',
-      url='',
+      author='Batterii',
+      author_email='tom@batterii.com',
+      url='https://github.com/Batterii/webobtoolkit',
       license='',
       packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
       include_package_data=True,
@@ -39,7 +39,6 @@ setup(name='webobtoolkit',
           # -*- Extra requirements: -*-
           "Webob>=1.2"
       ],
-      test_requires=["pytest"],
       entry_points="""
       # -*- Entry points: -*-
       """,
