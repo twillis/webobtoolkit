@@ -141,11 +141,13 @@ class TestQuickStart(unittest.TestCase):
                      (str(request), "Y NO COOKIES?"))
 
     def testCustomClient(self):
-        proxy = client.client_proxy(logging=True, log_level="DEBUG")
-        myclient = client.Client(proxy=proxy, assert_=testing.assert_status_code._200)
+        pipeline = client.client_pipeline(logging=True, log_level="DEBUG")
+        myclient = client.Client(pipeline=pipeline, assert_=testing.assert_status_code._200)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
         myclient.get("http://httpbin.org/get",
+                     query_string=payload)
+        myclient.head("http://httpbin.org/get",
                      query_string=payload)
 
         payload = {'key1': 'value1', 'key2': 'value2'}
@@ -201,7 +203,7 @@ class TestHoles(unittest.TestCase):
         """
         enable logging with no log_level
         """
-        client.client_proxy(logging=True)
+        client.client_pipeline(logging=True)
 
     def testClient_init(self):
         client.Client()
@@ -214,7 +216,7 @@ class TestHoles(unittest.TestCase):
         should raise value error
         """
         try:
-            filters.http_log_filter(client.client_proxy(), "NO")
+            filters.http_log_filter(client.client_pipeline(), "NO")
             self.fail("no error")
         except ValueError:
             pass

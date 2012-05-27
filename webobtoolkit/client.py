@@ -7,13 +7,13 @@ from urllib import urlencode
 from webob import Request
 
 
-def client_proxy(app=send_request_app,
+def client_pipeline(app=send_request_app,
                      cookie_support=True,
                      content_decoding=True,
                      logging=False, log_level=None):
     """
        :rtype: pre-configured :ref:`wsgi_application`
-       :param app: is a :ref:`wsgi_application` to wrap, the default is :ref:`send_request_app`
+       :param app: is a :ref:`wsgi_application` to wrap, the default is :ref:`webob.client.send_request_app`
        :param cookie_support: enables/disables the :func:`filters.cookie_filter`
        :param content_decoding: enables/disables the :func:`filters.decode_filter`
        :param logging: enables/disables the :func:`filters.http_log_filter`
@@ -34,17 +34,17 @@ def client_proxy(app=send_request_app,
     wsgi = filters.charset_filter(wsgi)
     return wsgi
 
+client_app = client_pipeline()
+
 
 class Client(object):
     """
-    :param app: wsgi application to pass requests to, default is :func:`client.basic_app`
-
+    :param pipeline: wsgi application to pass requests to, default is :func:`client.client_app`
     :param assert_: a callback lambda: request, response: True that will be called for every call to app
-    
     """
 
-    def __init__(self, proxy=client_proxy(), assert_=None):
-        self._proxy = proxy
+    def __init__(self, pipeline=None, assert_=None):
+        self._pipeline = pipeline or client_app
         if assert_:
             self._assert_ = assert_
         else:
@@ -60,13 +60,34 @@ class Client(object):
 
         :param query_string: the querystring dict which will be urlencoded for you
 
-        :param headers: extra headers fpr the request
+        :param headers: extra headers for the request
 
         :param assert: a callback to be ran after the response is recieved in the form of lambda: request, response: True . If present it will be ran for this call only rather than the one set on the client
         """
 
         return self(url=url,
-                    method="get",
+                    method="GET",
+                    query_string=query_string,
+                    headers=headers,
+                    assert_=assert_)
+    
+    def head(self, url, query_string=None, headers={}, assert_=None):
+        """
+        make an HTTP HEAD Request and return the response
+
+        :rtype: :class:`webob.Response`
+
+        :param url: the url for the request
+
+        :param query_string: the querystring dict which will be urlencoded for you
+
+        :param headers: extra headers for the request
+
+        :param assert: a callback to be ran after the response is recieved in the form of lambda: request, response: True . If present it will be ran for this call only rather than the one set on the client
+        """
+
+        return self(url=url,
+                    method="HEAD",
                     query_string=query_string,
                     headers=headers,
                     assert_=assert_)
@@ -89,7 +110,7 @@ class Client(object):
         """
         
         return self(url=url,
-                    method="post",
+                    method="POST",
                     query_string=query_string,
                     post=post,
                     headers=headers,
@@ -113,7 +134,7 @@ class Client(object):
         :param assert: a callback to be ran after the response is recieved in the form of lambda: request, response: True . If present it will be ran for this call only rather than the one set on the client
         """
         return self(url=url,
-                    method="put",
+                    method="PUT",
                     query_string=query_string,
                     post=post,
                     headers=headers,
@@ -136,7 +157,7 @@ class Client(object):
         :param assert: a callback to be ran after the response is recieved in the form of lambda: request, response: True . If present it will be ran for this call only rather than the one set on the client
         """
         return self(url=url,
-                    method="delete",
+                    method="DELETE",
                     query_string=query_string,
                     post=post,
                     headers=headers,
@@ -154,15 +175,13 @@ class Client(object):
         in the form of lambda: request, response: True . If present it
         will be ran for this call only rather than the one set on the
         client
-    
-
         """
         request = self._make_request(url=url,
-                                  method=method,
+                                  method=method.upper(),
                                   query_string=query_string,
                                   post=post,
                                   headers=headers)
-        response = request.get_response(self._proxy)
+        response = request.send(self._pipeline)
 
         if assert_:
             assert_(request.copy(), response.copy())

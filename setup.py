@@ -1,16 +1,31 @@
 from setuptools import setup, find_packages
-import sys
+from distutils.core import Command
 import os
 
-version = '0.0'
+version = '0.1'
 here = os.path.abspath(os.path.dirname(__file__))
 README = open(os.path.join(here, 'README.rst')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
+
+class PyTest(Command):
+    user_options = []
+
+    def initialize_options(self):
+        pass
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        import pytest
+        errno = pytest.main("")
+        raise SystemExit(errno)
+
 setup(name='webobtoolkit',
       version=version,
       description="",
-      long_description=README + '\n\n' +  CHANGES,
+      long_description=README + '\n\n' + CHANGES,
       classifiers=[],
       keywords='',
       author='',
@@ -22,9 +37,11 @@ setup(name='webobtoolkit',
       zip_safe=False,
       install_requires=[
           # -*- Extra requirements: -*-
-          "Webob>=1.2b3"
+          "Webob>=1.2"
       ],
+      test_requires=["pytest"],
       entry_points="""
       # -*- Entry points: -*-
       """,
+      cmdclass={"test": PyTest}
       )

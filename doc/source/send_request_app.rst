@@ -1,8 +1,8 @@
 .. _send_request_app:
 
-================
-send_request_app
-================
+============
+ client_app
+============
 
 So far we have seen examples of interacting with :ref:`wsgi
 applications <wsgi_application>` as callables to get HTTP Response

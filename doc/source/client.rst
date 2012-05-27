@@ -24,11 +24,16 @@ those applications or websites in your programs.
 .. literalinclude:: client_usage.py
    :language: python
 
+In the above code you see that we are constructing a client_pipeline
+to give the client to use. By default it will use
+webobtoolkit.client.client_app an instance of
+`webobtoolkit.client.client_pipeline <Reference>` which is pre-configured for
+cookie support and gzip content decoding.
 
 Reference
 =========
 
-.. autofunction:: webobtoolkit.client.basic_app
+.. autofunction:: webobtoolkit.client.client_pipeline
 
 .. autoclass:: webobtoolkit.client.Client
    :members:

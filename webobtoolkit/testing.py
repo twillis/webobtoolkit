@@ -7,9 +7,6 @@ on the response, you can use it like so...
 
 
 >>> assert_status_code._200(request, response)
-
-
-
 """
 from constants import STATUS_CODES
 from log import PRINT_REQ, PRINT_RES

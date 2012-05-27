@@ -2,6 +2,11 @@
  Change History
 ================
 
+0.1
+===
+
+initial release because I need this in my day job
+
 0.0
 ===
 
