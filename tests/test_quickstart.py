@@ -7,10 +7,9 @@ import urllib
 import unittest
 import uuid
 from cookielib import CookieJar
-from webobtoolkit import filters, client, testing
+from webobtoolkit import filters, client, testing, log as l
 import json
 import logging
-from StringIO import StringIO
 logging.basicConfig(level="DEBUG")
 log = logging.getLogger(__file__)
 # these "servers" are simpple wsgi applications that are used for testing
@@ -218,13 +217,19 @@ class TestQuickStart(unittest.TestCase):
                                           method="POST",
                                           post=dict(bar="1",
                                                     baz="2",
-                                                    file1=("this.txt", "this is a file"),
-                                                    file2=( "that.txt", "this is another file")))
-        for n in ("file1", "file2", "this.txt", "that.txt", "bar", "baz"):
+                                                    file1=("this.jpg", "this is a file"),
+                                                    file2=( "that.mp3", "this is another file")))
+        for n in ("file1", "file2", "this.jpg", "that.mp3", "bar", "baz"):
             self.assert_(n in req.body, str(req))
 
-        print str(req)
+        self.assert_("image/jpeg" in req.body, l.PRINT_REQ(req))
+        self.assert_("audio/mp3" in req.body, l.PRINT_REQ(req))
+        print l.PRINT_REQ(req)
 
+    def testLogReqRes(self):
+        IMG = b"\xff\xab"
+        msg = l.PRINT_REQ(Request.blank("/", body=IMG, method="POST"))
+        print msg
 
 class TestHoles(unittest.TestCase):
     """
