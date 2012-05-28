@@ -5,9 +5,6 @@ import filters
 from webob.client import send_request_app
 from urllib import urlencode
 from webob import Request
-import random
-import mimetypes
-from StringIO import StringIO
 
 
 def client_pipeline(app=send_request_app,
