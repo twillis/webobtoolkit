@@ -3,7 +3,6 @@ examples for every example in requests quickstart
 http://docs.python-requests.org/en/latest/user/quickstart/
 """
 from webob import Request, Response
-from webob.client import send_request_app
 import urllib
 import unittest
 import uuid
@@ -11,6 +10,7 @@ from cookielib import CookieJar
 from webobtoolkit import filters, client, testing
 import json
 import logging
+from StringIO import StringIO
 logging.basicConfig(level="DEBUG")
 log = logging.getLogger(__file__)
 # these "servers" are simpple wsgi applications that are used for testing
@@ -193,6 +193,37 @@ class TestQuickStart(unittest.TestCase):
         app = filters.assert_filter(Response("I'm somebody"),
                                     assert_=assert_body)
         Request.blank("/").get_response(app)
+
+    def testQueryStringHandling(self):
+        """
+        https://github.com/Batterii/webobtoolkit/issues/2
+
+        should use qs in url if not passed in explicitly
+        """
+        req = client.Client._make_request("http://something.example.com?foo=x")
+        self.assert_("foo" in req.params)
+
+        req = client.Client._make_request("http://something.example.com?foo=x",
+                                   query_string=dict(bar="x"))
+        self.assert_("foo" not in req.params, str(req))
+        self.assert_("bar" in req.params, str(req))
+
+    def testUploadFiles(self):
+        """
+        https://github.com/Batterii/webobtoolkit/issues/3
+
+        support file uploads to be more on par with webtest
+        """
+        req = client.Client._make_request("http://something.example.com?foo=x",
+                                          method="POST",
+                                          post=dict(bar="1",
+                                                    baz="2",
+                                                    file1=("this.txt", "this is a file"),
+                                                    file2=( "that.txt", "this is another file")))
+        for n in ("file1", "file2", "this.txt", "that.txt", "bar", "baz"):
+            self.assert_(n in req.body, str(req))
+
+        print str(req)
 
 
 class TestHoles(unittest.TestCase):

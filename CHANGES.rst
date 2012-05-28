@@ -2,6 +2,14 @@
  Change History
 ================
 
+0.1.1
+=====
+
+   - added file upload support
+   - changed handling of query_string to look at the url if it is not
+     passed in as a separate param.
+
+
 0.1
 ===
 
