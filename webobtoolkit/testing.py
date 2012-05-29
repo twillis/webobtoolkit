@@ -42,7 +42,7 @@ def get_assert(status):
     if status:
         try:
             return getattr(assert_status_code, "_%s" % status)
-        except AttributeError:
+        except AttributeError:  # pragma no cover
             raise ValueError("status %s is not a valid HTTP Status code " \
                              % status)
 

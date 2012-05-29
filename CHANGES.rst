@@ -2,6 +2,11 @@
  Change History
 ================
 
+0.1.2
+=====
+
+   - added preconfigured test client that is similar to webtest
+
 0.1.1
 =====
 

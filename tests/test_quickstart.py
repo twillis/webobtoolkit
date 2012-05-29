@@ -258,6 +258,19 @@ class TestTestClient(unittest.TestCase):
         tc = testing.TestClient(pipeline=status)
         tc.get("/", status=STATUS)
 
+    def testOtherMethods(self):
+        def echo(environ, start_response):
+            r = Request(environ)
+            return Response(r.method)(environ, start_response)
+        tc = testing.TestClient(pipeline=echo)
+        r = tc.put("/")
+        for m, f in dict(GET=tc.get, PUT=tc.put, POST=tc.post, DELETE=tc.delete).items():
+            r = f("/")
+            self.assert_(m in r.body, (r.body, m))
+
+        r = tc.head("/")
+        self.assert_(r.status_int == 200, r)
+
 
 class TestHoles(unittest.TestCase):
     """

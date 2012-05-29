@@ -2,21 +2,28 @@
 shared stuff to keep logging consistent
 """
 from constants import PAD
-import base64
 
-w = base64.standard_b64encode
 
-def HTTP_MSG(h, name="REQUEST"):
+def HTTP_MSG(h):
+    if hasattr(h, "method"):
+        hdr = "%s %s %s" % (h.method, h.path, h.http_version)
+        name = "REQUEST"
+    else:
+        hdr = h.status
+        name = "RESPONSE"
     return "\n\n" + \
            " - %s - ".join([PAD, PAD]) % name + \
            "\n\n" + \
-           "\n".join(("%s: %s" % (k, v) for k,v in h.headers.items())) + \
+           "%s\n" % hdr + \
+           "\n".join(("%s: %s" % (k, v) for k, v in h.headers.items())) + \
            "\n\n" + \
            h.body + \
            "\n\n"
 
+
 def PRINT_REQ(request):
     return HTTP_MSG(request)
 
+
 def PRINT_RES(response):
-    return HTTP_MSG(response, name="RESPONSE")
+    return HTTP_MSG(response)
