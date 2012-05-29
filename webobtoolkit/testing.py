@@ -10,7 +10,7 @@ on the response, you can use it like so...
 """
 from constants import STATUS_CODES
 from log import PRINT_REQ, PRINT_RES
-from client import Client
+from client import Client, client_app
 from filters import auto_redirect_filter
 
 
@@ -53,7 +53,7 @@ class TestClient(Client):
     basically if anything other than 302 or 200 will result in a failure
     """
     def __init__(self, pipeline=None):
-        Client.__init__(self, pipeline=auto_redirect_filter(pipeline),
+        Client.__init__(self, pipeline=auto_redirect_filter(pipeline or client_app),
                         assert_=_200_or_302)
 
     def get(self, url, query_string=None, headers={}, status=None):
