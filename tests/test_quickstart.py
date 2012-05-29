@@ -231,6 +231,34 @@ class TestQuickStart(unittest.TestCase):
         msg = l.PRINT_REQ(Request.blank("/", body=IMG, method="POST"))
         print msg
 
+
+class TestTestClient(unittest.TestCase):
+    def testAutoRedirect(self):
+        MSG = "you're here"
+
+        def redir(environ, start_response):
+            req = Request(environ)
+
+            if req.path != "/x":
+                return Response(status_int=302,
+                                headers={"Location": "/x"})(environ, start_response)
+            else:
+                return Response(MSG, status_int=200)(environ, start_response)
+
+        tc = testing.TestClient(pipeline=redir)
+        r = tc.get("/")
+        self.assert_(MSG in r.body)
+
+    def testAssertStatus(self):
+        STATUS = 500
+
+        def status(environ, start_response):
+            return Response("", status_int=STATUS)(environ, start_response)
+
+        tc = testing.TestClient(pipeline=status)
+        tc.get("/", status=STATUS)
+
+
 class TestHoles(unittest.TestCase):
     """
     this doesn't prove anything other than there is 100% test coverage

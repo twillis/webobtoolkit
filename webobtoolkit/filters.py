@@ -167,3 +167,35 @@ def cookie_filter(app):
 
         return response(environ, start_response)
     return m
+
+
+def auto_redirect_filter(app, limit=10):
+    """
+    intercepts response, if response.status is redirectish(301, 302)
+    will make the next call
+    """
+    ENV_PATH_KEYS = ("HTTP_HOST",
+                     "PATH_INFO",
+                     "QUERY_STRING",
+                     "REQUEST_METHOD",
+                     "SCRIPT_NAME",
+                     "SERVER_NAME",
+                     "SERVER_PORT",
+                     "SERVER_PROTOCOL")
+
+    REDIR_STATUS = [301, 302]
+    limit = int(limit)
+
+    def m(environ, start_response):
+        count = 1
+        request = Request(environ)
+        response = request.get_response(app)
+        while response.status_int in REDIR_STATUS and count < limit:
+            request = Request.blank(response.headers["Location"],
+                                    environ={k: v for k, v in request.environ.items() \
+                                             if k not in ENV_PATH_KEYS})
+            response = request.get_response(app)
+            count += 1
+        else:
+            return response(environ, start_response)
+    return m
