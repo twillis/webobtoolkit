@@ -223,7 +223,7 @@ class TestQuickStart(unittest.TestCase):
             self.assert_(n in req.body, str(req))
 
         self.assert_("image/jpeg" in req.body, l.PRINT_REQ(req))
-        self.assert_("audio/mp3" in req.body, l.PRINT_REQ(req))
+        self.assert_("audio/mpeg" in req.body, l.PRINT_REQ(req))
         print l.PRINT_REQ(req)
 
     def testLogReqRes(self):
