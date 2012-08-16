@@ -12,7 +12,8 @@ import json
 import logging
 logging.basicConfig(level="DEBUG")
 log = logging.getLogger(__file__)
-# these "servers" are simpple wsgi applications that are used for testing
+
+# these "servers" are simple wsgi applications that are used for testing
 def status_200_server(environ, start_response):
     return Response("OK")(environ, start_response)
 

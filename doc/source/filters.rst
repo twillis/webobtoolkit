@@ -15,7 +15,7 @@ the request and response you recieve are copies and modifying them
 does not effect the request or the response going to the application
 or client. 
 
-It is primarily user be the :ref:`http_log_filter`
+It is primarily used by the :ref:`http_log_filter`
 
 .. literalinclude:: ../../webobtoolkit/filters.py
    :language: python

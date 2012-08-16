@@ -40,7 +40,7 @@ setup(name='webobtoolkit',
       zip_safe=False,
       install_requires=[
           # -*- Extra requirements: -*-
-          "Webob>=1.2"
+          "Webob>=1.2.2"
       ],
       entry_points="""
       # -*- Entry points: -*-
