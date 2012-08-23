@@ -2,6 +2,12 @@
  Change History
 ================
 
+0.1.3
+=====
+
+   - added sugar for the HTTP OPTIONS method
+
+
 0.1.2
 =====
 

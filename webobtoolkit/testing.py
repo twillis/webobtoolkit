@@ -80,3 +80,8 @@ class TestClient(Client):
         kw = dict(query_string=query_string, headers=headers, post=post)
         kw["assert_"] = get_assert(status)
         return Client.delete(self, url, **kw)
+
+    def options(self, url, query_string=None, post={}, headers={}, status=None):
+        kw = dict(query_string=query_string, headers=headers, post=post)
+        kw["assert_"] = get_assert(status)
+        return Client.options(self, url, **kw)

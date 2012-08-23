@@ -2,8 +2,7 @@
  Webob Toolkit
 ===============
 
-This was written as an experiment to explore how much effort it takes
-to use the webob library as an http client.
+An http client api that leverages the power of webob.
 
 
 .. literalinclude:: doc/source/client_usage.py
