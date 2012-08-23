@@ -186,6 +186,29 @@ class Client(object):
                     headers=headers,
                     assert_=assert_)
 
+    def options(self, url, query_string=None, post={}, headers={}, assert_=None):
+        """
+        make an HTTP OPTIONS Request and return the response
+
+        :rtype: :class:`webob.Response`
+
+        :param url: the url for the request
+
+        :param query_string: the querystring dict which will be urlencoded for you
+
+        :param post: form post
+
+        :param headers: extra headers fpr the request
+
+        :param assert: a callback to be ran after the response is recieved in the form of lambda: request, response: True . If present it will be ran for this call only rather than the one set on the client
+        """
+        return self(url=url,
+                    method="OPTIONS",
+                    query_string=query_string,
+                    post=post,
+                    headers=headers,
+                    assert_=assert_)
+
     def __call__(self, url, method="get", query_string=None, post=None, headers={}, assert_=None):
         """
         :rtype: :class:`webob.Response`

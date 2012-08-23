@@ -265,7 +265,7 @@ class TestTestClient(unittest.TestCase):
             return Response(r.method)(environ, start_response)
         tc = testing.TestClient(pipeline=echo)
         r = tc.put("/")
-        for m, f in dict(GET=tc.get, PUT=tc.put, POST=tc.post, DELETE=tc.delete).items():
+        for m, f in dict(GET=tc.get, PUT=tc.put, POST=tc.post, DELETE=tc.delete, OPTIONS=tc.options).items():
             r = f("/")
             self.assert_(m in r.body, (r.body, m))
 
