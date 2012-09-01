@@ -52,9 +52,14 @@ class TestClient(Client):
     inspired by https://bitbucket.org/ianb/webtest
     basically if anything other than 302 or 200 will result in a failure
     """
-    def __init__(self, pipeline=None):
-        Client.__init__(self, pipeline=auto_redirect_filter(pipeline or client_app),
-                        assert_=_200_or_302)
+    def __init__(self, pipeline=None, redirect=False):
+        app = pipeline or client_app
+        if redirect:
+            app = auto_redirect_filter(app)
+        else:
+            pass
+
+        Client.__init__(self, pipeline=app, assert_=_200_or_302)
 
     def get(self, url, query_string=None, headers={}, status=None):
         kw = dict(query_string=query_string, headers=headers)

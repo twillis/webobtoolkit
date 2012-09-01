@@ -2,6 +2,13 @@
  Change History
 ================
 
+
+0.1.3.1
+=======
+
+   - option for enabling auto redirect in test client
+
+
 0.1.3
 =====
 

@@ -246,7 +246,7 @@ class TestTestClient(unittest.TestCase):
             else:
                 return Response(MSG, status_int=200)(environ, start_response)
 
-        tc = testing.TestClient(pipeline=redir)
+        tc = testing.TestClient(pipeline=redir, redirect=True)
         r = tc.get("/")
         self.assert_(MSG in r.body)
 
