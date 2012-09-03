@@ -258,12 +258,12 @@ class Client(object):
 
         :param post: form post
 
-        :param headers: extra headers fpr the request
+        :param headers: extra headers for the request
         """
         kw = {}
 
         if query_string and hasattr(query_string, "keys"):  # dict-like
-            kw["query_string"] = urlencode(query_string)
+            kw["query_string"] = dict_to_qs(query_string)
         elif query_string:  # treat as string /punt
             kw["query_string"] = str(query_string)
 
@@ -280,3 +280,23 @@ class Client(object):
         return Request.blank(url, **kw)
 
 
+def dict_to_qs(d):
+    if hasattr(d, "mixed"):
+        d_iter = d.mixed().items
+    else:
+        d_iter = d.items
+    for key, value in d_iter():
+        if not isinstance(value, list):
+            d[key] = _str(value)
+        else:
+            del d[key]
+            for i in value:
+                d.add(key, _str(i))
+
+    return urlencode(d)
+
+def _str(v):
+    if isinstance(v, basestring):
+        return v.encode("utf-8")
+    else:
+        return str(v).encode("utf-8")

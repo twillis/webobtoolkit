@@ -3,6 +3,7 @@ examples for every example in requests quickstart
 http://docs.python-requests.org/en/latest/user/quickstart/
 """
 from webob import Request, Response
+from webob.multidict import MultiDict
 import urllib
 import unittest
 import uuid
@@ -271,6 +272,20 @@ class TestTestClient(unittest.TestCase):
 
         r = tc.head("/")
         self.assert_(r.status_int == 200, r)
+
+    def testDictToQs(self):
+        def echo(environ, start_response):
+            r = Request(environ)
+            return Response(r.query_string)(environ, start_response)
+        tc = testing.TestClient(pipeline=echo)
+        TM = u"\u2122"
+        d = MultiDict()
+        d.add("a", 1)
+        d.add("a", 2)
+        d.add("a", 3)
+        d.add("b", u"Nike %s" % TM)
+        tc.get("/", query_string=d)
+
 
 
 class TestHoles(unittest.TestCase):

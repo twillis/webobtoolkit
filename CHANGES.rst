@@ -2,6 +2,10 @@
  Change History
 ================
 
+0.1.3.2
+=======
+
+   - client handles multidict to querystring better
 
 0.1.3.1
 =======
