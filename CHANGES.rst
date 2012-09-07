@@ -2,6 +2,11 @@
  Change History
 ================
 
+0.1.3.3
+=======
+
+   - breakout stringify dict method as it may be useful
+
 0.1.3.2
 =======
 

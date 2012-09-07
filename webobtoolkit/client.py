@@ -280,7 +280,8 @@ class Client(object):
         return Request.blank(url, **kw)
 
 
-def dict_to_qs(d):
+def stringify_dict(d):
+    """make sure all values are something urlencodeable"""
     if hasattr(d, "mixed"):
         d_iter = d.mixed().items
     else:
@@ -293,10 +294,15 @@ def dict_to_qs(d):
             for i in value:
                 d.add(key, _str(i))
 
-    return urlencode(d)
+    return d
 
-def _str(v):
+
+def dict_to_qs(d):
+    return urlencode(stringify_dict(d))
+
+
+def _str(v, charset="utf-8"):
     if isinstance(v, basestring):
-        return v.encode("utf-8")
+        return v.encode(charset)
     else:
-        return str(v).encode("utf-8")
+        return str(v).encode(charset)  # punt
