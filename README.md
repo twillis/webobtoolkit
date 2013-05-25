@@ -79,14 +79,14 @@ merely wsgi middleware that handles things that an HTTP client would
 need to handle like cookies and gzip responses.
 
 
-#### parameter passing
+#### Parameter Passing
 
 Often when interacting with websites or wsgi applications you will
 need to pass parameters. HTTP provides a couple of ways to do that. One
 is via query string.
 
 
-##### query string
+##### Query String
 
 The webobtoolkit client can take a query string as either a string or
 dictionary like object. Here’s an example of using Google’s ajax
@@ -105,7 +105,7 @@ for k, v in result.items():
 ```
 
 
-##### form posts
+##### Form Posts
 
 Another way to pass data to a website or wsgi application is through
 form posts. This example also shows how you might do an assert on the
@@ -133,7 +133,7 @@ print client.post("http://ajax.googleapis.com/ajax/services/search/web",
                   assert_=assert_success)
 ```
 
-##### upload files
+##### Upload Files
 
 WebobToolkit also provides a way to programmaticly upload files.
 
@@ -161,22 +161,22 @@ print client.post("/", files=dict(file1=("myfile.txt",
 ```
 
 
-#### built-ins
+#### Built-ins
 
 Some of the intricacies of HTTP are handled automatically for you.
 
-##### gzipped responses
+##### Gzipped Responses
 
 Some websites return a response that is compressed in order to reduce
 bandwidth. By default WebobToolKit can detect and un-compress the
 responses automatically for you
 
-##### cookie support
+##### Cookie Support
 
 By default WebobToolKit handles cookies and will submit them
 automatically as part of subsequent requests.
 
-#### optional logging
+#### Optional Logging
 
 The client pipeline has optional logging of both the request and the
 response. Here’s an example of how to enable it.
