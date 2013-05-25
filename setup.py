@@ -2,9 +2,9 @@ from setuptools import setup, find_packages
 from distutils.core import Command
 import os
 
-version = '0.1.3.3'
+version = '0.2'
 here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.rst')).read()
+README = open(os.path.join(here, 'README.md')).read()
 CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
 
 

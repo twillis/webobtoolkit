@@ -2,6 +2,14 @@
  Change History
 ================
 
+0.2
+===
+
+   - documentation updates
+   - file uploads syntax sugar
+   - changed client to not rely on a global pipeline app
+
+
 0.1.3.3
 =======
 
