@@ -37,10 +37,8 @@ def http_log_filter(app, level="DEBUG"):
 
     :param level: log level
     """
-    level_int = getattr(logging, str(level).upper(), None)
+    level_int = logging._checkLevel(level)
     log = logging.getLogger("http_log")
-    if level_int == None:
-        raise ValueError("level %s is not a valid level" % level)
 
     def _log_it(request, response):
         log.log(level=level_int, msg=l.PRINT_REQ(request))
