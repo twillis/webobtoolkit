@@ -1,24 +1,26 @@
 #  WebobToolkit
 
 WebobToolKit is a set of utilities that can be used to compose HTTP
-clients.
+clients built on top of [Webob](http://docs.webob.org/en/latest/reference.html).
 
 ## Getting Started
 
-Webob toolkit provides an easy way out of the box to interact with web
-sites or wsgi applications. A webob response is returned for every
-call so you can leverage your webob knowledge. It may also be useful
-for people already familiar with WSGI and WSGI middleware.
+WebobToolKit provides an easy way out of the box to interact with web
+sites or [wsgi](http://wsgi.readthedocs.org/en/latest/)
+applications. A [webob response](http://docs.webob.org/en/latest/reference.html#id2) is
+returned for every call so you can leverage your webob knowledge. It
+may also be useful for people already familiar with WSGI and [WSGI
+middleware](http://docs.webob.org/en/latest/comment-example.html#id5).
 
 ### The Client
 
 The WebobToolKit client contains a lot of the typical functionality
 you need in an HTTP client. All current HTTP verbs are
 supported(GET,POST,PUT,DELETE,OPTIONS,HEAD,...). Each of the methods
-takes a url, query string, and an optional assert method and returns a
+takes a URL, query string, and an optional assert method and returns a
 webob Response object.
 
-#### getting a response from a website
+#### Getting a Response from a Website
 
 Here’s an example of how to get a response from wikipedia.org
 
@@ -34,7 +36,7 @@ print client.get("http://en.wikipedia.org/wiki/HTTP")
 #### getting a response from a WSGI application
 
 Most python web frameworks provide a way to expose your web
-application as a WSGI app, webobtoolkit can interact with WSGI apps
+application as a WSGI app, WebobToolKit can interact with WSGI apps
 just as if they were running on a web server. This can provide a way
 for you to unit test your application without the web server overhead.
 
@@ -80,14 +82,14 @@ need to handle like cookies and gzip responses.
 #### parameter passing
 
 Often when interacting with websites or wsgi applications you will
-need to pass paramters. HTTP provides a couple of ways to do that. One
+need to pass parameters. HTTP provides a couple of ways to do that. One
 is via query string.
 
 
 ##### query string
 
 The webobtoolkit client can take a query string as either a string or
-dictionary like object. Here’s an example of using google’s ajax
+dictionary like object. Here’s an example of using Google’s ajax
 search api.
 
 ```python
@@ -133,7 +135,7 @@ print client.post("http://ajax.googleapis.com/ajax/services/search/web",
 
 ##### upload files
 
-WebobToolkit also provides a way to programatically upload files.
+WebobToolkit also provides a way to programmaticly upload files.
 
 ```python
 
@@ -161,12 +163,12 @@ print client.post("/", files=dict(file1=("myfile.txt",
 
 #### built-ins
 
-Some of the intracacies of HTTP are handled automatically for you.
+Some of the intricacies of HTTP are handled automatically for you.
 
 ##### gzipped responses
 
 Some websites return a response that is compressed in order to reduce
-bandwidth. By default webobtoolkit can detect and uncompress the
+bandwidth. By default WebobToolKit can detect and un-compress the
 responses automatically for you
 
 ##### cookie support
@@ -181,7 +183,7 @@ response. Here’s an example of how to enable it.
 
 
 Once enabled, the request and the response will be logged at whichever
-log level you specificed.
+log level you specified.
 
 
 ```python
