@@ -228,6 +228,7 @@ class TestQuickStart(unittest.TestCase):
         self.assert_("audio/mpeg" in req.body, l.PRINT_REQ(req))
         print l.PRINT_REQ(req)
 
+
     def testLogReqRes(self):
         IMG = b"\xff\xab"
         msg = l.PRINT_REQ(Request.blank("/", body=IMG, method="POST"))
@@ -286,6 +287,20 @@ class TestTestClient(unittest.TestCase):
         d.add("b", u"Nike %s" % TM)
         tc.get("/", query_string=d)
 
+    def testFiles(self):
+        def echo(environ, start_response):
+            r = Request(environ)
+            return Response(r.body)(environ, start_response)
+        tc = testing.TestClient(pipeline=echo)
+        res = tc.post("/", files=dict(file1=("this.mp3", "i am music")))
+        self.assertIn("this.mp3", res.body)
+
+        with self.assertRaises(KeyError):
+            tc.post("/", post=dict(file1="xxx"), 
+                    files=dict(file1=("this.mp3", "i am music")))
+
+        with self.assertRaises(ValueError):
+            res = tc.post("/", files=dict(file1=("this.mp3")))            
 
 
 class TestHoles(unittest.TestCase):

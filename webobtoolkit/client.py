@@ -55,7 +55,7 @@ class Client(object):
     """
 
     def __init__(self, pipeline=None, assert_=None):
-        self._pipeline = pipeline or client_app
+        self._pipeline = pipeline or client_pipeline()
         if assert_:
             self._assert_ = assert_
         else:
@@ -110,7 +110,7 @@ class Client(object):
                     headers=headers,
                     assert_=assert_)
 
-    def post(self, url, query_string=None, post={}, headers={}, assert_=None):
+    def post(self, url, query_string=None, post={}, headers={}, assert_=None, files={}):
         """
         make an HTTP POST Request and return the response
 
@@ -130,6 +130,16 @@ class Client(object):
         present it will be ran for this call only rather than the one
         set on the client
         """
+        for k, v in files.items():
+            try:
+                filename, filevalue = v
+            except ValueError:
+                raise ValueError("files needs to contain 2 item sequences of (filename, filebody) %s" % v)
+
+            if k not in post:
+                post[k] = (filename, filevalue)
+            else:
+                raise KeyError("%s already exists in post" % k)
 
         return self(url=url,
                     method="POST",
