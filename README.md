@@ -33,7 +33,7 @@ client = Client()
 print client.get("http://en.wikipedia.org/wiki/HTTP")
 ```
 
-#### getting a response from a WSGI application
+#### Getting a Response from a WSGI Application
 
 Most python web frameworks provide a way to expose your web
 application as a WSGI app, WebobToolKit can interact with WSGI apps
