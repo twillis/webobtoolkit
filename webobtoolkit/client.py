@@ -87,8 +87,7 @@ class Client(object):
                     assert_=assert_)
 
     def head(self, url, query_string=None, headers={}, assert_=None):
-        """
-        make an HTTP HEAD Request and return the response
+        """make an HTTP HEAD Request and return the response
 
         :rtype: :class:`webob.Response`
 
@@ -98,7 +97,11 @@ class Client(object):
 
         :param headers: extra headers for the request
 
-        :param assert: a callback to be ran after the response is recieved in the form of lambda: request, response: True . If present it will be ran for this call only rather than the one set on the client
+        :param assert: a callback to be ran after the response is
+        recieved in the form of lambda: request, response: True . If
+        present it will be ran for this call only rather than the one
+        set on the client
+
         """
 
         return self(url=url,
