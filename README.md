@@ -40,6 +40,11 @@ application as a WSGI app, WebobToolKit can interact with WSGI apps
 just as if they were running on a web server. This can provide a way
 for you to unit test your application without the web server overhead.
 
+As you can see from the example below, all you need to do is construct
+a client pipeline around your wsgi application. A client pipeline is
+merely wsgi middleware that handles things that an HTTP client would
+need to handle like cookies and gzip responses.
+
 ```python
 """
 getting a response from a wsgi application
@@ -72,11 +77,6 @@ def application(environ, start_response):
 
 print client.Client(pipeline=client.client_pipeline(application)).get("/")
 ```
-
-As you can see by the example, all you need to do is construct a
-client pipeline around your wsgi application. A client pipeline is
-merely wsgi middleware that handles things that an HTTP client would
-need to handle like cookies and gzip responses.
 
 
 #### Parameter Passing
