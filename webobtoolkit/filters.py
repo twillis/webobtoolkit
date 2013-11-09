@@ -58,7 +58,7 @@ def charset_filter(app):
     def m(environ, start_response):
         request = Request(environ)
         res = request.get_response(app)
-        if not res.charset:
+        if res.content_type and not res.charset:
             res.charset = "utf8"
         return res(environ, start_response)
     return m

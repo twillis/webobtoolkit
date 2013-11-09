@@ -2,6 +2,13 @@
  Change History
 ================
 
+0.2.1
+=====
+
+
+  - check for content_type before attempting to set charset because
+    some webservers behave badly
+
 0.2
 ===
 

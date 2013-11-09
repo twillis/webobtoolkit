@@ -176,7 +176,7 @@ class TestQuickStart(unittest.TestCase):
         except:
             log.debug("yay I got an error", exc_info=True)
 
-        myclient.get("http://no", assert_=testing.assert_status_code._400)
+        myclient.get("http://no", assert_=testing.assert_status_code._502)
 
     def testAssertFilter(self):
         nobody = Response(status_int=501)
