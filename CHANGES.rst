@@ -2,6 +2,11 @@
  Change History
 ================
 
+0.2.2
+=====
+
+  - merge pull request to address issue #8 https://github.com/twillis/webobtoolkit/issues/8
+
 0.2.1
 =====
 
