@@ -50,7 +50,7 @@ def cookie_server(environ, start_response):
         return Response(request.cookies["the-cookie"])(environ, start_response)
     else:
         response = Response(body="has your cookie")
-        response.set_cookie("the-cookie", str(uuid.uuid4()))
+        response.set_cookie("the-cookie", str(uuid.uuid4()), secure=True)
         return response(environ, start_response)
 
 
@@ -114,7 +114,7 @@ class TestQuickStart(unittest.TestCase):
         self.assert_("the-cookie" in r.headers["set-cookie"], str(r))
         # value = r.cookies["the-cookie"] # cookies not handled the same for request??
         value = r.headers["set-cookie"]
-        r2 = Request.blank("/").get_response(app)
+        r2 = Request.blank("/", scheme="https").get_response(app)
         self.assert_(str(r2.body) in value, (value, r2.body))
 
     def testCookieAdapters(self):
@@ -176,7 +176,7 @@ class TestQuickStart(unittest.TestCase):
         except:
             log.debug("yay I got an error", exc_info=True)
 
-        myclient.get("http://no", assert_=testing.assert_status_code._502)
+        myclient.get("http://no", assert_=testing.assert_status_code._400)
 
     def testAssertFilter(self):
         nobody = Response(status_int=501)
@@ -233,7 +233,6 @@ class TestQuickStart(unittest.TestCase):
         IMG = b"\xff\xab"
         msg = l.PRINT_REQ(Request.blank("/", body=IMG, method="POST"))
         print msg
-
 
 class TestTestClient(unittest.TestCase):
     def testAutoRedirect(self):
