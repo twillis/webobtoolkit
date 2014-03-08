@@ -6,3 +6,14 @@ tests/test_hydrant.py
 doc/build
 dist
 *,cover
+/.DS_Store
+/cov_core-1.7-py2.7.egg/
+/coverage-3.7.1-py2.7-macosx-10.9-x86_64.egg/
+/doc/.DS_Store
+/execnet-1.2.0-py2.7.egg/
+/pep8-1.4.6-py2.7.egg/
+/py-1.4.20-py2.7.egg/
+/pytest-2.5.2-py2.7.egg/
+/pytest_cache-1.0-py2.7.egg
+/pytest_cov-1.6-py2.7.egg/
+/pytest_pep8-1.0.5-py2.7.egg
