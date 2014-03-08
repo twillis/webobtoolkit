@@ -1,9 +1,20 @@
 """
 this is the client api it's mostly sugar
 """
-import filters
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
+from . import filters
 from webob.client import send_request_app
-from urllib import urlencode
+
+
 from webob import Request
 
 

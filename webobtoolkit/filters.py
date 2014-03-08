@@ -1,9 +1,18 @@
 """
 filters for taking care of various aspects of HTTP
 """
+try:
+    from http.cookiejar import CookieJar
+except ImportError:
+    from cookielib import CookieJar
+
+try:
+    basestring
+except NameError:
+    basestring = str
+
 from webob import Request
-from cookielib import CookieJar
-import log as l
+from . import log as l
 import logging
 
 
@@ -116,14 +125,25 @@ class RequestCookieAdapter(object):
     def is_unverifiable(self):
         return True  # sure? Why not?
 
+    def unverifiable(self):
+        return self.is_unverifiable()
+
     def get_full_url(self):
         return self._request.url
 
     def get_type(self):
         return self._request.scheme
 
+    @property
+    def type(self):
+        return self.get_type()
+
     def get_origin_req_host(self):
         return self._request.host
+
+    @property
+    def origin_req_host(self):
+        return self.get_origin_req_host()
 
     def add_unredirected_header(self, key, header):
         self._request.headers[key] = header
@@ -146,6 +166,8 @@ class ResponseCookieAdapter(object):
     def getheaders(self, header):
         return self._response.headers.getall(header)
 
+    def get_all(self, header, default):
+        return self.getheaders(header) or default
 
 def cookie_filter(app):
     """

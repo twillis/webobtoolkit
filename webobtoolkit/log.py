@@ -1,7 +1,7 @@
 """
 shared stuff to keep logging consistent
 """
-from constants import PAD
+from .constants import PAD
 
 
 def HTTP_MSG(h):
@@ -11,13 +11,23 @@ def HTTP_MSG(h):
     else:
         hdr = h.status
         name = "RESPONSE"
+
+    if h.charset:
+        try:
+            body = h.text
+        except UnicodeDecodeError:
+            body = "Could not decode body for printing"
+
+    else:
+        body = "no charset can't print body"
+
     return "\n\n" + \
            " - %s - ".join([PAD, PAD]) % name + \
            "\n\n" + \
            "%s\n" % hdr + \
            "\n".join(("%s: %s" % (k, v) for k, v in h.headers.items())) + \
            "\n\n" + \
-           h.body + \
+           body + \
            "\n\n"
 
 

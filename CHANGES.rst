@@ -2,6 +2,13 @@
  Change History
 ================
 
+0.2.3
+-----
+
+  - python 3 compatible
+  - rewrite docs
+  - make it easier to run tests with py.test via python setup.py test
+
 0.2.2
 =====
 

@@ -6,3 +6,6 @@ tests/test_hydrant.py
 doc/build
 dist
 *,cover
+.DS_Store
+*.egg
+.tox/
