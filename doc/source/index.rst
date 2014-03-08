@@ -1,139 +1,166 @@
-.. webobtoolkit documentation master file, created by
-   sphinx-quickstart on Wed Apr 11 09:39:13 2012.
+.. WebOb Toolkit documentation master file, created by
+   sphinx-quickstart on Sat Mar  8 09:00:00 2014.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-=========================
- Welcome to webobtoolkit
-=========================
+WebOb Toolkit: Requests for Aliens!
+===================================
 
-Webobtoolkit is a set of utilities that can be used to compose HTTP
-clients. 
+WebOb Toolkit is a tool kit for building HTTP_ clients using WebOb_
+request and response objects and `wsgi middleware`_.
 
-
-Getting Started with WebObToolKit
-=================================
-
-Webob toolkit provides an easy way out of the box to interact with web
-sites or wsgi applications. A webob response is returned for every
-call so you can leverage your webob knowledge. It may also be useful
-for people already familiar with WSGI and WSGI middleware.  
-
-The Client
-----------
-
-The webobtoolkit client contains a lot of the typical functionality
-you need in an HTTP client. All current HTTP verbs are
-supported(GET,POST,PUT,DELETE,OPTIONS,HEAD,...). Each of the methods
-takes a url, query string, and an optional assert method and returns a webob Response object.  
-
-getting a response from a website
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Here's an example of how to get a response from wikipedia.org
-
-.. literalinclude:: responsewiki.py
+You may already be familiar with Webob_ request and response objects
+if you have experience with a web framework that uses them such as
+pyramid_ or WebTest_ .
 
 
-getting a response from a WSGI application
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Usage
+-----
 
-Most python web frameworks provide a way to expose your web
-application as a WSGI app, webobtoolkit can interact with WSGI apps
-just as if they were running on a web server. This can provide a way
-for you to unit test your application without the web server overhead.
-
-.. literalinclude:: responsewsgi.py
+Here are some examples of how WebOb Toolkit can be used.
 
 
-As you can see by the example, all you need to do is construct a
-client pipeline around your wsgi application. A client pipeline is
-merely wsgi middleware that handles things that an HTTP client would
-need to handle like cookies and gzip responses.
+A Very Simple HTTP Client
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you didn't know, WebOb's Request object grew a "get_response_" method for
+sending an http request to either a wsgi application, or a url and
+returning the response. ::
+
+  >>> from webob import Request
+  >>> str(Request.blank("https://google.com").get_response())
+  '301 Moved Permanently\nLocation: https://www.google.com/\nContent-Type: text/html; charset=UTF-8\nDate: Sat, 08 Mar 2014 14:58:59 GMT\nExpires: Mon, 07 Apr 2014 14:58:59 GMT\nCache-Control: public, max-age=2592000\nServer: gws\nContent-Length: 220\nX-XSS-Protection: 1; mode=block\nX-Frame-Options: SAMEORIGIN\nAlternate-Protocol: 443:quic\n\n<HTML><HEAD><meta http-equiv="content-type" content="text/html;charset=utf-8">\n<TITLE>301 Moved</TITLE></HEAD><BODY>\n<H1>301 Moved</H1>\nThe document has moved\n<A HREF="https://www.google.com/">here</A>.\r\n</BODY></HTML>\r\n'
+  >>> 
 
 
-parameter passing
-~~~~~~~~~~~~~~~~~
+That is a pretty neat trick, but as http clients go, typically you
+need other functionality like handling `http compression`_ for example
+or `handling cookies`_. 
 
-Often when interacting with websites or wsgi applications you will
-need to pass paramters. HTTP provides a couple of ways to do that. One
-is via query string.
+WebOb Toolkit provides this additional functionality as `wsgi
+middleware`_ which allows you to compose your own solutions in much
+the same way as you compose wsgi applications to be used as HTTP_
+Servers.
+
+Handling Compression
+~~~~~~~~~~~~~~~~~~~~
+
+According to the `http compression`_ article on wikipedia, an http
+client can request a compressed response by including an
+"Accept-Encoding" header with the request. In WebOb_ you would
+do... ::
+
+  >>> from webob import Request
+  >>> Request.blank("https://github.com", headers={"Accept-Encoding": "gzip, deflate"}).get_response().headers.get("Content-Encoding", "Content was not encoded")
+  'gzip'
+  >>> 
+
+As you can see, we requested gzipped content from github, and it
+responded nicely. However, if we were to do anything with the body of
+the response we would have to uncompress it first. So, it seems that
+the rules for compression is to a header with each request and
+uncompress the body of each response if the response includes a
+"Content-Encoding" header.
 
 
-query string
-++++++++++++
+The next example, uses webobtoolkit's decode_filter to handle
+compressed responses. ::
 
-The webobtoolkit client can take a query string as either a string or
-dictionary like object. Here's an example of using google's ajax
-search api.
-
-.. literalinclude:: responseqs.py
-
-
-
-form posts
-++++++++++
-
-Another way to pass data to a website or wsgi application is through
-form posts. This example also shows how you might do an assert on the
-response in order to determine how your logic should proceed. 
-
-.. literalinclude:: responsepost.py
+  >>> from webob import Request
+  >>> from webob.client import send_request_app as app
+  >>> from webobtoolkit.filters import decode_filter
+  >>> app_gzip = decode_filter(app)
+  >>> Request.blank("https://github.com", headers={"Accept-Encoding": "gzip"}).get_response(app).body[:100]
+  '\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\x03\xdd[\xdbr\xe4\xc6\x91}\xf7W\x94\x9b\x1b\xa3\xdd0\xd1\xf7\x1b9M:\xe6B\xd9\xb3\xb6%\xda\x1cY\x92\x1d\x0eF5Ph`\x08\xa0 \\H\xf6\xfc\x98\xdf\xf7\xcb|\xb2\xaa\x00\x14\xd0M69Kk\xbdV\x84\xa6\x9b@]\xb32O\x9e\xcc\xac^\xfd\xf2\xfd\xb7\xef>\xfexy\xc1\x82"\x8e\xce\x7f'
+  >>> Request.blank("https://github.com", headers={"Accept-Encoding": "gzip"}).get_response(app_gzip).body[:100]
+  '<!DOCTYPE html>\n<html>\n  <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# object: http:/'
+  >>> 
 
 
 
-upload files
-++++++++++++
+From the above example you will notice a couple of differences from
+previous examples. Firstly we are importing WebOb's send_request_app_
+and some `wsgi middleware`_ from webobtoolkit for handling compressed
+responses. We wrap webob's app with the decode_filter to create an app
+that will decompress any response we may encounter.
 
-WebobToolkit also provides a way to programatically upload files. 
+The first call to github is through webobs app. And as you can see,
+the response is compressed just like we asked. The second call is
+through the new app we created by wrapping webob's app with
+webobtoolkits decode_filter, and as you can see the response has been
+decompressed.
 
-.. literalinclude:: responsefiles.py
+The name "filter" is being used here to differentiate between `wsgi
+middleware`_ which is usually used in the context of servers and `wsgi
+middleware`_ that is intended for use with clients. Filters and
+middleware are identical in regards to how they are implemented.
 
+Here is how the decode_filter is implemented. As you can see, it
+doesn't take much to write a filter.
 
-
-built ins
-~~~~~~~~~
-
-gzip responses
-++++++++++++++
-
-some websites return a response that is compressed in order to reduce
-bandwidth. By default webobtoolkit can detect and uncompress the
-responses automatically for you
-
-cookie support
-++++++++++++++
-
-by default webobtoolkit handles cookies and will submit them
-automatically as part of subsequent requests.
+.. literalinclude:: ../../../webobtoolkit/webobtoolkit/filters.py
+   :pyobject: decode_filter
 
 
-optional logging
-~~~~~~~~~~~~~~~~
+A More Robust HTTP Client
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The client pipeline has optional logging of both the request and the
-response. Here's an example of how to enable it.
+requests_ is a good example of a more useful http client. According to
+the docs it includes a lot of useful things that one would want for in
+an http client. Some of the things it includes are.
+
+* handling compression
+* handling cookies
+* handling redirects
+* guessing, handling charset decoding
+* connection pooling
+* ssl verification
+* form posts
+* file uploads
+
+And probably much more. 
+
+A lot of this functionality can be written on top of webob and a
+series of filters. We've already seen how one might handle
+compression. WebOb toolkit provides filters for handling cookies,
+redirects and handling unspecified charsets. ::
+
+  >>> from webob import Request
+  >>> from webob.client import send_request_app
+  >>> from webobtoolkit import filters
+  >>> requests_app = filters.auto_redirect_filter(filters.cookie_filter(filters.decode_filter(filters.charset_filter(send_request_app))))
+  >>> Request.blank("https://google.com").get_response(requests_app)
+  >>> str(Request.blank("https://google.com").get_response(requests_app))[:500]
+  '200 OK\nDate: Sat, 08 Mar 2014 17:35:40 GMT\nExpires: -1\nCache-Control: private, max-age=0\nContent-Type: text/html; charset=ISO-8859-1\nServer: gws\nX-XSS-Protection: 1; mode=block\nX-Frame-Options: SAMEORIGIN\n\n<!doctype html><html itemscope="" itemtype="http://schema.org/WebPage"><head><meta content="Search the world\'s information, including webpages, images, videos and more. Google has many special features to help you find exactly what you\'re looking for." name="description"><meta content="noodp" '
 
 
-Once enabled, the request and the response will be logged at whichever
-log level you specificed.
+We construct requests_app out of a number of filters that for handling requests and responses.
 
-.. literalinclude:: responselogging.py
+* if a charset is not specified on the response(which sometimes
+  happens), a safe default is chosen in order to reduce the cahnces
+  for decoding errors
 
-
-
-Contents:
-
-.. toctree::
-   :maxdepth: 2
-
-   reference
+* the client advertise support for gzip encoding and decompress the response if necessary
+* cookies will be persisted for each response and sent for each request
+* if a redirect is encountered follow it automatically.
+* form posts are handled by webob already, though some might prefer a better syntax.
 
 
-Indices and tables
-==================
+Todo
+~~~~
+* for connection pooling, urllib3 provides an implementation that could be easily used to construct an alternate send_request_app (see: webob.client.SendRequest)
+* ssl verification is also provided by urllib3
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
 
+
+.. _webob: http://webob.org
+.. _wsgi: http://wsgi.org
+.. _http: http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol
+.. _pyramid: http://docs.pylonsproject.org/en/latest/
+.. _webtest: http://webtest.readthedocs.org/en/latest/
+.. _get_response: http://docs.webob.org/en/latest/modules/webob.html#webob.request.BaseRequest.get_response
+.. _`http compression`: http://en.wikipedia.org/wiki/HTTP_compression
+.. _`handling cookies`: http://en.wikipedia.org/wiki/HTTP_cookie
+.. _`wsgi middleware`: http://be.groovie.org/2005/10/07/wsgi_and_wsgi_middleware_is_easy.html
+.. _send_request_app: http://docs.webob.org/en/latest/modules/client.html#webob.client.send_request_app
+.. _requests: http://docs.python-requests.org/en/latest/
