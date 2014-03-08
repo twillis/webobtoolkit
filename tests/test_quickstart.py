@@ -2,12 +2,21 @@
 examples for every example in requests quickstart
 http://docs.python-requests.org/en/latest/user/quickstart/
 """
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
 from webob import Request, Response
 from webob.multidict import MultiDict
-import urllib
+
 import unittest
 import uuid
-from cookielib import CookieJar
+try:
+    from http.cookiejar import CookieJar 
+except ImportError:
+    from cookielib import CookieJar
+
 from webobtoolkit import filters, client, testing, log as l
 import json
 import logging
@@ -63,11 +72,11 @@ class TestQuickStart(unittest.TestCase):
         """
         urlencoding yourself seems unexpected
         """
-        query_string = urllib.urlencode(dict(foo=1, bar=2))
+        query_string = urlencode(dict(foo=1, bar=2))
         r = Request.blank("/", query_string=query_string).get_response(echo_data_server)
         self.assertEqual(r.status_int, 200)
-        self.assert_("foo" in r.body)
-        self.assert_("bar" in r.body)
+        self.assert_("foo" in r.text)
+        self.assert_("bar" in r.text)
 
     def testPayloadPOST(self):
         """
@@ -76,8 +85,8 @@ class TestQuickStart(unittest.TestCase):
         POST = dict(foo=1, bar=2)
         r = Request.blank("/", POST=POST).get_response(echo_data_server)
         self.assertEqual(r.status_int, 200)
-        self.assert_("foo" in r.body)
-        self.assert_("bar" in r.body)
+        self.assert_("foo" in r.text)
+        self.assert_("bar" in r.text)
 
     def testCharSet(self):
         """
@@ -93,7 +102,7 @@ class TestQuickStart(unittest.TestCase):
         magically figures out transfer encodings and gzip deflates is necessary
         """
         r = Request.blank("/").get_response(filters.decode_filter(gzip_server))
-        self.assert_("compressed" in r.body, r.body)
+        self.assert_("compressed" in r.text, r.body)
 
     def testRawResponse(self):
         """
@@ -105,7 +114,7 @@ class TestQuickStart(unittest.TestCase):
     # headers
     def testCustomHeaders(self):
         r = Request.blank("/", headers={"My-Custom-Header": "is rad"}).get_response(echo_request_server)
-        self.assert_("My-Custom-Header" in r.body, str(r))
+        self.assert_("My-Custom-Header" in r.text, str(r))
 
     # cookies
     def testMaintainCookies(self):
@@ -115,7 +124,7 @@ class TestQuickStart(unittest.TestCase):
         # value = r.cookies["the-cookie"] # cookies not handled the same for request??
         value = r.headers["set-cookie"]
         r2 = Request.blank("/", scheme="https").get_response(app)
-        self.assert_(str(r2.body) in value, (value, r2.body))
+        self.assert_(str(r2.text) in value, (value, r2.text))
 
     def testCookieAdapters(self):
         jar = CookieJar(policy=None)  # DefaultCookiePolicy())
@@ -220,10 +229,10 @@ class TestQuickStart(unittest.TestCase):
                                                     file1=("this.jpg", "this is a file"),
                                                     file2=( "that.mp3", "this is another file")))
         for n in ("file1", "file2", "this.jpg", "that.mp3", "bar", "baz"):
-            self.assert_(n in req.body, str(req))
+            self.assert_(n in req.text, str(req))
 
-        self.assert_("image/jpeg" in req.body, l.PRINT_REQ(req))
-        self.assert_("audio/mpeg" in req.body, l.PRINT_REQ(req))
+        self.assert_("image/jpeg" in req.text, l.PRINT_REQ(req))
+        self.assert_("audio/mpeg" in req.text, l.PRINT_REQ(req))
 
     def testLogReqRes(self):
         IMG = b"\xff\xab"
@@ -244,7 +253,7 @@ class TestTestClient(unittest.TestCase):
 
         tc = testing.TestClient(pipeline=redir, redirect=True)
         r = tc.get("/")
-        self.assert_(MSG in r.body)
+        self.assert_(MSG in r.text)
 
     def testAssertStatus(self):
         STATUS = 500
@@ -263,7 +272,7 @@ class TestTestClient(unittest.TestCase):
         r = tc.put("/")
         for m, f in dict(GET=tc.get, PUT=tc.put, POST=tc.post, DELETE=tc.delete, OPTIONS=tc.options).items():
             r = f("/")
-            self.assert_(m in r.body, (r.body, m))
+            self.assert_(m in r.text, (r.body, m))
 
         r = tc.head("/")
         self.assert_(r.status_int == 200, r)
@@ -287,7 +296,7 @@ class TestTestClient(unittest.TestCase):
             return Response(r.body)(environ, start_response)
         tc = testing.TestClient(pipeline=echo)
         res = tc.post("/", files=dict(file1=("this.mp3", "i am music")))
-        self.assertIn("this.mp3", res.body)
+        self.assertIn("this.mp3", res.text)
 
         with self.assertRaises(KeyError):
             tc.post("/", post=dict(file1="xxx"), 
