@@ -6,8 +6,11 @@ import sys
 
 version = '0.2.3'
 here = os.path.abspath(os.path.dirname(__file__))
-README = open(os.path.join(here, 'README.rst')).read()
-CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
+try:
+    README = open(os.path.join(here, 'README.rst')).read()
+    CHANGES = open(os.path.join(here, 'CHANGES.rst')).read()
+except IOError:
+    README = CHANGES = ""
 
 class PyTest(TestCommand):
     test_package_name = 'webobtoolkit'
