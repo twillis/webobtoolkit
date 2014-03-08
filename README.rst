@@ -134,13 +134,13 @@ redirects and handling unspecified charsets. ::
   '200 OK\nDate: Sat, 08 Mar 2014 17:35:40 GMT\nExpires: -1\nCache-Control: private, max-age=0\nContent-Type: text/html; charset=ISO-8859-1\nServer: gws\nX-XSS-Protection: 1; mode=block\nX-Frame-Options: SAMEORIGIN\n\n<!doctype html><html itemscope="" itemtype="http://schema.org/WebPage"><head><meta content="Search the world\'s information, including webpages, images, videos and more. Google has many special features to help you find exactly what you\'re looking for." name="description"><meta content="noodp" '
 
 
-We construct requests_app out of a number of filters that for handling requests and responses.
+We construct requests_app out of a number of filters that are for handling requests and responses.
 
 * if a charset is not specified on the response(which sometimes
-  happens), a safe default is chosen in order to reduce the cahnces
+  happens), a safe default is chosen in order to reduce the chances
   for decoding errors
 
-* the client advertise support for gzip encoding and decompress the response if necessary
+* the client advertises support for gzip encoding and decompress the response if necessary
 * cookies will be persisted for each response and sent for each request
 * if a redirect is encountered follow it automatically.
 * form posts are handled by webob already, though some might prefer a better syntax.
