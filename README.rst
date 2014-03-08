@@ -153,6 +153,8 @@ Todo
 
 
 
+.. include:: ../../CHANGES.rst
+
 .. _webob: http://webob.org
 .. _wsgi: http://wsgi.org
 .. _http: http://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol

@@ -224,13 +224,10 @@ class TestQuickStart(unittest.TestCase):
 
         self.assert_("image/jpeg" in req.body, l.PRINT_REQ(req))
         self.assert_("audio/mpeg" in req.body, l.PRINT_REQ(req))
-        print l.PRINT_REQ(req)
-
 
     def testLogReqRes(self):
         IMG = b"\xff\xab"
         msg = l.PRINT_REQ(Request.blank("/", body=IMG, method="POST"))
-        print msg
 
 class TestTestClient(unittest.TestCase):
     def testAutoRedirect(self):
