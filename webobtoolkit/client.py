@@ -1,7 +1,7 @@
 """
 this is the client api it's mostly sugar
 """
-import filters
+from . import filters
 from webob.client import send_request_app
 from urllib import urlencode
 from webob import Request

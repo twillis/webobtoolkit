@@ -3,7 +3,7 @@ filters for taking care of various aspects of HTTP
 """
 from webob import Request
 from cookielib import CookieJar
-import log as l
+from . import log as l
 import logging
 
 

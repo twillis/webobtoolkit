@@ -1,7 +1,7 @@
 """
 shared stuff to keep logging consistent
 """
-from constants import PAD
+from .constants import PAD
 
 
 def HTTP_MSG(h):

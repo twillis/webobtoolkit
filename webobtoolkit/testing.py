@@ -8,10 +8,10 @@ on the response, you can use it like so...
 
 >>> assert_status_code._200(request, response)
 """
-from constants import STATUS_CODES
-from log import PRINT_REQ, PRINT_RES
-from client import Client, client_pipeline
-from filters import auto_redirect_filter
+from .constants import STATUS_CODES
+from .log import PRINT_REQ, PRINT_RES
+from .client import Client, client_pipeline
+from .filters import auto_redirect_filter
 
 
 def _status_code_err_msg(request, response, expected):
