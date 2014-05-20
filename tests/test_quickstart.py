@@ -53,6 +53,12 @@ def gzip_server(environ, start_response):
     return response(environ, start_response)
 
 
+def invalid_content_encoding_server(environ, start_response):
+    response = Response("this is regular text that is lying about it's encoding")
+    response.content_encoding = "UTF-8" # UTF-8 is invalid, but found in the wild
+    return response(environ, start_response)
+    
+
 def cookie_server(environ, start_response):
     request = Request(environ)
     if "the-cookie" in request.cookies:
@@ -103,6 +109,13 @@ class TestQuickStart(unittest.TestCase):
         """
         r = Request.blank("/").get_response(filters.decode_filter(gzip_server))
         self.assert_("compressed" in r.text, r.body)
+    
+    def testInvalidContentEncoding(self):
+        """
+        Tests the resiliency of webobtoolkit when decoding a response w/ invalid content encoding headers
+        """
+        r = Request.blank("/").get_response(filters.decode_filter(invalid_content_encoding_server))
+        self.assert_("lying about it's encoding" in r.text, r.body)
 
     def testRawResponse(self):
         """

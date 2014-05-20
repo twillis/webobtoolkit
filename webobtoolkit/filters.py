@@ -89,7 +89,11 @@ def decode_filter(app):
         request = Request(environ)
         request.accept_encoding = "gzip"
         response = request.get_response(app)
-        response.decode_content()
+        # Some web servers return an invalid `content_encoding`, make webobtookit more resilient
+        try:
+            response.decode_content()
+        except ValueError:
+            pass
         return response(environ, start_response)
     return m
 
