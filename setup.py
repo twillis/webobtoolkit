@@ -4,7 +4,7 @@ from distutils.core import Command
 import os
 import sys
 
-version = '0.2.3'
+version = '0.2.4'
 here = os.path.abspath(os.path.dirname(__file__))
 try:
     README = open(os.path.join(here, 'README.rst')).read()
